@@ -5,6 +5,8 @@ const bcrypt = require('bcrypt');
 const { Server } = require('socket.io');
 require('dotenv').config();
 const db = require('./database/db');
+const lobbyRoutes = require('./routes/Lobby');
+app.use('/lobbys', lobbyRoutes);
 
 const app = express();
 const server = http.createServer(app);
