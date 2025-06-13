@@ -1,6 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Login from './pages/Login';
-import Lobby from './pages/lobby';
+import Lobby from './pages/Lobby';
 import Partida from './pages/Partida';
 import Perfil from './pages/Perfil';
 import './App.css';

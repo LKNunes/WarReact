@@ -5,11 +5,14 @@ const bcrypt = require('bcrypt');
 const { Server } = require('socket.io');
 require('dotenv').config();
 const db = require('./database/db');
-const lobbyRoutes = require('./routes/Lobby');
-app.use('/lobbys', lobbyRoutes);
+
 
 const app = express();
 const server = http.createServer(app);
+
+const lobbyRoutes = require('./routes/Lobby');
+app.use('/lobbys', lobbyRoutes);
+
 const io = new Server(server, {
   cors: {
     origin: '*',
