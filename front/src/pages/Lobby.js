@@ -6,23 +6,36 @@ function Lobby() {
   const [novoLobby, setNovoLobby] = useState('');
 
   useEffect(() => {
-    buscarLobbys();
+  buscarLobbys();
   }, []);
 
   const buscarLobbys = async () => {
+  try {
     const res = await axios.get('http://localhost:3001/lobbys');
     setLobbys(res.data);
-  };
+  } catch (error) {
+    console.error('Erro ao buscar lobbys:', error);
+    // Aqui você pode exibir uma mensagem no front, se quiser:
+    // alert('Erro ao buscar lobbys. Verifique sua conexão com o servidor.');
+  }
+};
 
-  const criarLobby = async () => {
-    if (!novoLobby.trim()) return;
+const criarLobby = async () => {
+  if (!novoLobby.trim()) return; // Se estiver vazio, não faz nada
+
+  try {
     await axios.post('http://localhost:3001/lobbys/criar', {
       nome: novoLobby,
-      dono_id: 1 // Substitua pelo ID do usuário logado
+      dono_id: 1 // ⚠️ Substituir depois pelo ID do usuário logado
     });
+
     setNovoLobby('');
-    buscarLobbys();
-  };
+    buscarLobbys(); // Atualiza a lista
+  } catch (error) {
+    console.error('Erro ao criar lobby:', error);
+    // alert('Erro ao criar lobby. Verifique sua conexão com o servidor.');
+  }
+};
 
   return (
     <div className="p-4">

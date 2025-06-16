@@ -6,8 +6,12 @@ const { Server } = require('socket.io');
 require('dotenv').config();
 const db = require('./database/db');
 
-
 const app = express();
+
+// 1) Ativa CORS e JSON antes das rotas
+app.use(cors());
+app.use(express.json());
+
 const server = http.createServer(app);
 
 const lobbyRoutes = require('./routes/Lobby');
@@ -18,9 +22,6 @@ const io = new Server(server, {
     origin: '*',
   },
 });
-
-app.use(cors());
-app.use(express.json());
 
 // WebSocket conexão
 io.on('connection', (socket) => {
