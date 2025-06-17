@@ -17,37 +17,40 @@ export default function Login() {
     setMensagem('');
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setMensagem('');
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  setMensagem('');
 
-    if (modo === 'login') {
-      try {
-        const res = await axios.post('http://localhost:3001/login', {
-          email: form.email,
-          senha: form.senha,
-        });
+  if (modo === 'login') {
+    try {
+      const res = await axios.post('http://localhost:3001/login', {
+        email: form.email,
+        senha: form.senha,
+      });
 
-        localStorage.setItem('usuarioNome', res.data.usuario.nome_usuario);
-        navigate('/lobby');
-      } catch (error) {
-        setMensagem(error.response?.data?.erro || 'Erro ao logar');
-      }
-    } else {
-      try {
-        const res = await axios.post('http://localhost:3001/cadastro', {
-          nome_usuario: form.nome_usuario,
-          email: form.email,
-          senha: form.senha,
-        });
-        setMensagem('Cadastro realizado com sucesso! Faça login.');
-        setModo('login');
-        resetForm();
-      } catch (error) {
-        setMensagem(error.response?.data?.erro || 'Erro ao cadastrar');
-      }
+      localStorage.setItem('usuarioNome', res.data.usuario.nome_usuario);
+      localStorage.setItem('usuarioId', res.data.usuario.id); // <-- Aqui
+
+      navigate('/lobby');
+    } catch (error) {
+      setMensagem(error.response?.data?.erro || 'Erro ao logar');
     }
-  };
+  } else {
+    try {
+      const res = await axios.post('http://localhost:3001/cadastro', {
+        nome_usuario: form.nome_usuario,
+        email: form.email,
+        senha: form.senha,
+      });
+      setMensagem('Cadastro realizado com sucesso! Faça login.');
+      setModo('login');
+      resetForm();
+    } catch (error) {
+      setMensagem(error.response?.data?.erro || 'Erro ao cadastrar');
+    }
+  }
+};
+
 
   return (
     <div className="max-w-md mx-auto mt-20 p-6 border rounded shadow bg-white">

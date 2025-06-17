@@ -95,7 +95,7 @@ app.post('/login', (req, res) => {
     if (!senhaConfere) {
       return res.status(401).json({ erro: 'Senha incorreta' });
     }
-
+    
     res.json({
       mensagem: 'Login bem-sucedido',
       usuario: {

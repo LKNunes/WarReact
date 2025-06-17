@@ -21,4 +21,75 @@ router.post('/criar', (req, res) => {
   });
 });
 
+router.post('/entrar', (req, res) => {
+  const { lobby_id, jogador_id } = req.body;
+
+  if (!lobby_id || !jogador_id) {
+    return res.status(400).json({ erro: 'Campos obrigatórios' });
+  }
+
+  const sql = 'INSERT INTO lobby_jogadores (lobby_id, jogador_id) VALUES (?, ?)';
+
+  db.query(sql, [lobby_id, jogador_id], (err, result) => {
+    if (err) {
+      console.error('Erro ao entrar no lobby:', err);
+      return res.status(500).json({ erro: 'Erro ao entrar no lobby' });
+    }
+    res.status(200).json({ mensagem: 'Entrou no lobby com sucesso' });
+  });
+});
+
+const entrarNoLobby = async (lobbyId, jogadorId) => {
+  try {
+    await axios.post('http://localhost:3001/lobbys/entrar', {
+      lobby_id: lobbyId,
+      jogador_id: jogadorId
+    });
+    alert('Você entrou no lobby!');
+    // Aqui pode atualizar a lista, redirecionar, etc
+  } catch (error) {
+    console.error('Erro ao entrar no lobby:', error);
+    alert('Falha ao entrar no lobby.');
+  }
+};
+
+// Exemplo simples de rota para buscar jogadores no lobby
+router.get('/:lobbyId/jogadores', (req, res) => {
+  const lobbyId = req.params.lobbyId;
+
+  const sql = `
+    SELECT j.id, j.nome_usuario
+    FROM jogadores j
+    JOIN lobby_jogadores lj ON j.id = lj.jogador_id
+    WHERE lj.lobby_id = ?
+  `;
+
+  db.query(sql, [lobbyId], (err, results) => {
+    if (err) return res.status(500).json({ erro: err });
+    res.json(results);
+  });
+});
+
+router.post('/entrar', (req, res) => {
+  const { lobby_id, jogador_id } = req.body;
+  // Aqui, implemente o código para adicionar jogador ao lobby no banco
+  // Exemplo fictício:
+  const sql = 'INSERT INTO lobby_jogadores (lobby_id, jogador_id) VALUES (?, ?)';
+  db.query(sql, [lobby_id, jogador_id], (err, result) => {
+    if (err) return res.status(500).json({ erro: err });
+    res.json({ mensagem: 'Entrou no lobby' });
+  });
+});
+
+// Sair do lobby
+router.post('/sair', (req, res) => {
+  const { lobby_id, jogador_id } = req.body;
+  // Código para remover jogador do lobby
+  const sql = 'DELETE FROM lobby_jogadores WHERE lobby_id = ? AND jogador_id = ?';
+  db.query(sql, [lobby_id, jogador_id], (err, result) => {
+    if (err) return res.status(500).json({ erro: err });
+    res.json({ mensagem: 'Saiu do lobby' });
+  });
+});
+
 module.exports = router;
