@@ -46,6 +46,19 @@ export default function LobbyRoom() {
     }
   };
 
+    const CriarPartida = async () => {
+    try {
+      await axios.post('http://localhost:3001/partida/$(id)/criar', {
+        jogador_id: jogadorId,
+        lobby_id: id,
+      });
+      navigate('/partida');
+    } catch (error) {
+      console.error('Erro ao sair do lobby:', error);
+      alert('Erro ao sair do lobby');
+    }
+  };
+
   return (
     <div className="p-4">
       <h1 className="text-2xl font-bold mb-4">Lobby: {lobby?.nome}</h1>
@@ -69,11 +82,18 @@ export default function LobbyRoom() {
       </button>
 
       <button
-        className="bg-red-500 text-white px-4 py-2 rounded"
+        className="bg-red-500 text-white px-4 py-2 mr-2 rounded"
         onClick={sairDoLobby}
       >
         Sair do Lobby
       </button>
+
+  <    button
+        className="bg-green-500 text-white px-4 py-2 rounded"
+        onClick={CriarPartida}
+      > Criar Partida
+      </button>
+
     </div>
   );
 }
