@@ -18,6 +18,8 @@ export default function MainLayout() {
         <nav className="space-x-4">
           <Link to="/lobby">Lobby</Link>
           <Link to="/perfil">Perfil</Link>
+          <Link to="/Partidas">Partidas</Link>
+
           <button onClick={handleLogout} className="hover:underline">
             logout
           </button>

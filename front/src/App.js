@@ -26,7 +26,8 @@ function App() {
       >
         <Route path="lobby" element={<Lobby />} />
         <Route path="lobby/:id" element={<Lobby />} />
-        <Route path="partida/partida" element={<Partida />} />
+        <Route path="/partida/" element={<Partida />} />
+        <Route path="/partida/:id" element={<Partida />} />
         <Route path="perfil" element={<Perfil />} />
       </Route>
 

@@ -14,6 +14,9 @@ app.use(express.json());
 
 const server = http.createServer(app);
 
+const partidasRoutes = require('./routes/partidas');
+app.use('/partidas', partidasRoutes);
+
 const lobbyRoutes = require('./routes/Lobby');
 app.use('/lobbys', lobbyRoutes);
 

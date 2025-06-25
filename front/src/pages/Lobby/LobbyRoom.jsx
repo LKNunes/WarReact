@@ -10,9 +10,13 @@ export default function LobbyRoom() {
   const jogadorId = localStorage.getItem('usuarioId');
 
   useEffect(() => {
+    if (!jogadorId) {
+      navigate('/login');
+      return;
+    }
     buscarLobby();
     buscarJogadores();
-  }, []);
+  }, [id, jogadorId, navigate]);
 
   const buscarLobby = async () => {
     try {
@@ -46,18 +50,22 @@ export default function LobbyRoom() {
     }
   };
 
-    const CriarPartida = async () => {
+  const CriarPartida = async () => {
     try {
-      await axios.post('http://localhost:3001/partida/$(id)/criar', {
+      const res = await axios.post(`http://localhost:3001/partidas/${id}/criar`, {
         jogador_id: jogadorId,
         lobby_id: id,
       });
-      navigate('/partida');
+
+      const partidaId = res.data.partidaId;
+      navigate(`/partida/${partidaId}`);
     } catch (error) {
-      console.error('Erro ao sair do lobby:', error);
-      alert('Erro ao sair do lobby');
+      console.error('Erro ao criar partida:', error);
+      alert('Erro ao criar partida');
     }
   };
+
+  if (!lobby) return <p>Carregando lobby...</p>;
 
   return (
     <div className="p-4">
@@ -88,12 +96,12 @@ export default function LobbyRoom() {
         Sair do Lobby
       </button>
 
-  <    button
+      <button
         className="bg-green-500 text-white px-4 py-2 rounded"
         onClick={CriarPartida}
-      > Criar Partida
+      >
+        Criar Partida
       </button>
-
     </div>
   );
 }
