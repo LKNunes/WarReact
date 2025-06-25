@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
+
 export default function LobbyList() {
   const [lobbys, setLobbys] = useState([]);
   const [novoLobby, setNovoLobby] = useState('');
@@ -25,7 +26,7 @@ export default function LobbyList() {
     if (!novoLobby.trim()) return;
 
     try {
-      const res = await axios.post('http://localhost:3001/lobbys/criar', {
+       await axios.post('http://localhost:3001/lobbys/criar', {
         nome: novoLobby,
         dono_id: jogadorId,
       });

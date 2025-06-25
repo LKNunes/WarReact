@@ -1,0 +1,1091 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.container {
+  height: 100vh;
+  width: 100vw;
+  position: relative;
+  background-color: #080e14;
+  overflow: hidden;
+}
+
+input[type="radio"]:checked ~ .dice {
+  opacity: 1;
+  transition: 0s 0.4s;
+}
+
+.setA,
+.setB {
+  display: none;
+  opacity: 0;
+  visibility: hidden;
+  height: 0;
+  width: 0;
+}
+
+.rollBtn {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: translate(0, 68px) scale(1.15);
+  filter: hue-rotate(115deg);
+  transition: transform 0.62s ease-in-out, filter 1.44s;
+  width: 100%;
+}
+
+.rollBtn-inner {
+  font-size: 18px;
+  background-color: #1c6993;
+  letter-spacing: 0.5px;
+  border-radius: 18px;
+  margin-top: 100px;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.12s;
+  position: relative;
+  &:hover {
+    background-color: #154964;
+  }
+}
+
+.rollBtn-text {
+  padding: 14px 30px;
+  position: relative;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.rollBtn-blocker {
+  position: absolute;
+  height: 0;
+  width: 0;
+  left: -3px;
+  top: -3px;
+  opacity: 0.7;
+  z-index: 3;
+}
+
+@mixin blockButtonKeyframes {
+  0%,
+  100% {
+    height: calc(100% + 6px);
+    width: calc(100% + 6px);
+  }
+}
+
+.setA:checked ~ .rollBtn,
+.setB:checked ~ .rollBtn {
+  transform: translate(0);
+  filter: hue-rotate(0deg);
+}
+
+.setA:checked ~ .rollBtn .rollBtn-blocker {
+  animation: blockButton1 0.6s;
+}
+
+@keyframes blockButton1 {
+  @include blockButtonKeyframes;
+}
+
+.setB:checked ~ .rollBtn .rollBtn-blocker {
+  animation: blockButton2 0.6s;
+}
+
+@keyframes blockButton2 {
+  @include blockButtonKeyframes;
+}
+
+.setA ~ .rollBtn .rollBtn-inner:before,
+.setB ~ .rollBtn .rollBtn-inner:after {
+  content: "";
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  left: 0;
+  top: 0;
+  border-radius: 15px;
+}
+
+.setA:checked ~ .rollBtn .rollBtn-inner:before,
+.setB:checked ~ .rollBtn .rollBtn-inner:after {
+  animation: pulseButton 0.8s;
+}
+
+@keyframes pulseButton {
+  0% {
+    background-color: rgb(89, 107, 209);
+  }
+  100% {
+    transform: scale(1.35, 2);
+  }
+}
+
+.rollBtn label {
+  user-select: none;
+  cursor: pointer;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  left: 0;
+  top: 0;
+  animation: rotateRollBtn 9s linear infinite;
+  z-index: 2;
+}
+
+.labels-set:hover label {
+  animation-play-state: paused;
+}
+
+$animDelay: 0s;
+$animDelayStep: 0.25s;
+
+@for $i from 1 through 36 {
+  .labels-set label:nth-child(#{$i}) {
+    animation-delay: $animDelay;
+  }
+  $animDelay: $animDelay + $animDelayStep;
+}
+
+.labels-setB,
+.setA:checked ~ .rollBtn .labels-setA,
+.setB:checked ~ .rollBtn .labels-setB {
+  visibility: hidden;
+}
+
+.setA:checked ~ .rollBtn .labels-setB,
+.setB:checked ~ .rollBtn .labels-setA {
+  visibility: visible;
+}
+
+@keyframes rotateRollBtn {
+  0%,
+  2.777777% {
+    z-index: 1;
+  }
+  2.777778%,
+  100% {
+    z-index: 0;
+  }
+}
+
+.dice {
+  opacity: 0;
+}
+
+.die-wrapper {
+  pointer-events: none;
+}
+
+.die {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100px;
+  height: 100px;
+  transform-style: preserve-3d;
+  transition-delay: 0.4s;
+  .face {
+    box-shadow: 0 0 31px -16px #9d9d9d inset;
+    position: absolute;
+    width: 100px;
+    height: 100px;
+  }
+  .face span {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    position: absolute;
+  }
+  .face1 {
+    transform: translateZ(50px);
+    align-items: center;
+    justify-content: center;
+  }
+  .face2 {
+    transform: rotateY(90deg) translateZ(50px);
+  }
+  .face3 {
+    transform: rotateY(180deg) translateZ(50px);
+  }
+  .face4 {
+    transform: rotateY(-90deg) translateZ(50px);
+  }
+  .face5 {
+    transform: rotateX(90deg) translateZ(50px);
+  }
+  .face6 {
+    transform: rotateX(-90deg) rotateY(180deg) translateZ(-50px);
+  }
+}
+
+.setA:checked ~ .dice .die-wrapper {
+  animation: fadeOutIn1 1.1s forwards;
+}
+.setB:checked ~ .dice .die-wrapper {
+  animation: fadeOutIn2 1.1s forwards;
+}
+
+@mixin fadeOutIn {
+  40% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOutIn1 {
+  @include fadeOutIn;
+}
+
+@keyframes fadeOutIn2 {
+  @include fadeOutIn;
+}
+
+.die-inner {
+  transform-style: preserve-3d;
+  transition-delay: 0.4s;
+  height: 100px;
+  width: 100px;
+}
+
+.die1 {
+  .die {
+    transform: translate(-150px, -200px);
+  }
+  .face {
+    background-color: #ffffff;
+    border: 1px solid #c3c3c3;
+    span {
+      background-color: #6d6d6d;
+      box-shadow: 3px 3px 3px 6px black inset;
+    }
+  }
+}
+
+.die2 {
+  .die {
+    transform: translate(50px, -200px);
+  }
+  .face {
+    background-color: #d54444;
+    border: 1px solid #bd1c1c;
+    span {
+      background-color: #ffffff;
+    }
+  }
+}
+
+.pips-md {
+  top: 15px;
+  right: 15px;
+  bottom: 15px;
+  left: 15px;
+  margin: auto;
+}
+
+.pips-tl {
+  top: 15px;
+  left: 15px;
+}
+
+.pips-tr {
+  top: 15px;
+  right: 15px;
+}
+
+.pips-bl {
+  bottom: 15px;
+  left: 15px;
+}
+
+.pips-br {
+  bottom: 15px;
+  right: 15px;
+}
+
+.pips-mdl {
+  top: 0;
+  bottom: 0;
+  left: 15px;
+  margin: auto 0;
+}
+
+.pips-mdr {
+  top: 0;
+  bottom: 0;
+  right: 15px;
+  margin: auto 0;
+}
+
+.setA:checked ~ .dice .die1 .die,
+.setA:checked ~ .dice .die2 .die,
+.setB:checked ~ .dice .die1 .die-inner,
+.setB:checked ~ .dice .die2 .die-inner {
+  transition: 1.8s 0.6s cubic-bezier(0.17, 0.29, 0.65, 0.95);
+}
+
+$rollsAMap: (
+  1: (
+    680,
+    -40,
+    -90,
+    860,
+    160,
+    0
+  ),
+  2: (
+    -760,
+    120,
+    0,
+    590,
+    180,
+    30
+  ),
+  3: (
+    860,
+    120,
+    0,
+    -570,
+    110,
+    90
+  ),
+  4: (
+    -575,
+    240,
+    0,
+    -750,
+    -325,
+    0
+  ),
+  5: (
+    860,
+    150,
+    -90,
+    860,
+    200,
+    0
+  ),
+  6: (
+    -750,
+    200,
+    -90,
+    500,
+    120,
+    90
+  ),
+  7: (
+    860,
+    145,
+    -90,
+    -575,
+    200,
+    -90
+  ),
+  8: (
+    -670,
+    180,
+    130,
+    -570,
+    110,
+    90
+  ),
+  9: (
+    680,
+    240,
+    0,
+    865,
+    -20,
+    -90
+  ),
+  10: (
+    -670,
+    180,
+    120,
+    600,
+    180,
+    30
+  ),
+  11: (
+    950,
+    180,
+    30,
+    -665,
+    180,
+    50
+  ),
+  12: (
+    -575,
+    215,
+    0,
+    -670,
+    -180,
+    200
+  ),
+  13: (
+    855,
+    160,
+    0,
+    860,
+    230,
+    -90
+  ),
+  14: (
+    -1025,
+    180,
+    250,
+    860,
+    150,
+    0
+  ),
+  15: (
+    1040,
+    -200,
+    0,
+    -935,
+    320,
+    90
+  ),
+  16: (
+    -480,
+    180,
+    150,
+    -570,
+    320,
+    0
+  ),
+  17: (
+    590,
+    180,
+    230,
+    510,
+    240,
+    90
+  ),
+  18: (
+    -580,
+    40,
+    270,
+    410,
+    180,
+    480
+  ),
+  19: (
+    685,
+    -230,
+    0,
+    -750,
+    200,
+    0
+  ),
+  20: (
+    -570,
+    225,
+    0,
+    -840,
+    180,
+    120
+  ),
+  21: (
+    770,
+    180,
+    230,
+    415,
+    180,
+    150
+  ),
+  22: (
+    -485,
+    -180,
+    510,
+    860,
+    240,
+    -90
+  ),
+  23: (
+    865,
+    35,
+    270,
+    -750,
+    310,
+    0
+  ),
+  24: (
+    -675,
+    -180,
+    340,
+    -585,
+    340,
+    -90
+  ),
+  25: (
+    595,
+    180,
+    305,
+    685,
+    290,
+    0
+  ),
+  26: (
+    -570,
+    60,
+    270,
+    590,
+    180,
+    110
+  ),
+  27: (
+    595,
+    180,
+    240,
+    -490,
+    -180,
+    400
+  ),
+  28: (
+    -760,
+    -300,
+    0,
+    -575,
+    240,
+    0
+  ),
+  29: (
+    860,
+    30,
+    270,
+    860,
+    250,
+    90
+  ),
+  30: (
+    -755,
+    -220,
+    0,
+    415,
+    180,
+    225
+  ),
+  31: (
+    1050,
+    290,
+    -90,
+    -755,
+    150,
+    0
+  ),
+  32: (
+    -760,
+    300,
+    -90,
+    -845,
+    180,
+    220
+  ),
+  33: (
+    1050,
+    -30,
+    -90,
+    860,
+    140,
+    -90
+  ),
+  34: (
+    -310,
+    -180,
+    340,
+    675,
+    140,
+    0
+  ),
+  35: (
+    1045,
+    -30,
+    -90,
+    -665,
+    180,
+    40
+  ),
+  36: (
+    -575,
+    150,
+    0,
+    -940,
+    220,
+    0
+  )
+);
+
+@each $key, $values in $rollsAMap {
+  .rollA#{$key}:checked ~ .dice .die1 .die {
+    transform: translate(-200px, 100px)
+      rotateX(#{nth($values, 1)}deg)
+      rotateY(#{nth($values, 2)}deg)
+      rotateZ(#{nth($values, 3)}deg);
+  }
+  .rollA#{$key}:checked ~ .dice .die2 .die {
+    transform: translate(100px, 100px)
+      rotateX(#{nth($values, 4)}deg)
+      rotateY(#{nth($values, 5)}deg)
+      rotateZ(#{nth($values, 6)}deg);
+  }
+}
+
+$rollsBMap: (
+  1: (
+    415,
+    180,
+    130,
+    870,
+    150,
+    0
+  ),
+  2: (
+    -315,
+    -180,
+    220,
+    685,
+    300,
+    0
+  ),
+  3: (
+    590,
+    180,
+    160,
+    -840,
+    180,
+    140
+  ),
+  4: (
+    -935,
+    150,
+    0,
+    -570,
+    -120,
+    0
+  ),
+  5: (
+    870,
+    150,
+    0,
+    1050,
+    320,
+    -90
+  ),
+  6: (
+    -575,
+    220,
+    -90,
+    595,
+    180,
+    160
+  ),
+  7: (
+    590,
+    180,
+    160,
+    -655,
+    180,
+    110
+  ),
+  8: (
+    -660,
+    180,
+    110,
+    -845,
+    180,
+    120
+  ),
+  9: (
+    590,
+    180,
+    160,
+    870,
+    150,
+    0
+  ),
+  10: (
+    -580,
+    150,
+    0,
+    860,
+    220,
+    -90
+  ),
+  11: (
+    860,
+    220,
+    -90,
+    -750,
+    320,
+    -90
+  ),
+  12: (
+    -760,
+    320,
+    -90,
+    -395,
+    300,
+    0
+  ),
+  13: (
+    870,
+    150,
+    0,
+    590,
+    180,
+    160
+  ),
+  14: (
+    -580,
+    220,
+    -90,
+    685,
+    300,
+    0
+  ),
+  15: (
+    685,
+    300,
+    0,
+    -760,
+    320,
+    -90
+  ),
+  16: (
+    -840,
+    180,
+    160,
+    -760,
+    320,
+    -90
+  ),
+  17: (
+    1050,
+    320,
+    -90,
+    595,
+    180,
+    155
+  ),
+  18: (
+    -580,
+    220,
+    -90,
+    870,
+    150,
+    0
+  ),
+  19: (
+    590,
+    180,
+    165,
+    -575,
+    220,
+    -90
+  ),
+  20: (
+    -580,
+    220,
+    -90,
+    -660,
+    -180,
+    110
+  ),
+  21: (
+    685,
+    300,
+    0,
+    415,
+    180,
+    110
+  ),
+  22: (
+    -665,
+    -180,
+    110,
+    1050,
+    320,
+    -90
+  ),
+  23: (
+    870,
+    150,
+    0,
+    -750,
+    -115,
+    0
+  ),
+  24: (
+    -755,
+    300,
+    0,
+    -575,
+    220,
+    -90
+  ),
+  25: (
+    1050,
+    320,
+    -90,
+    870,
+    150,
+    0
+  ),
+  26: (
+    -760,
+    320,
+    -90,
+    415,
+    180,
+    110
+  ),
+  27: (
+    860,
+    220,
+    -90,
+    -570,
+    60,
+    -90
+  ),
+  28: (
+    -760,
+    320,
+    -90,
+    -575,
+    110,
+    -90
+  ),
+  29: (
+    685,
+    250,
+    0,
+    870,
+    150,
+    0
+  ),
+  30: (
+    -755,
+    400,
+    0,
+    590,
+    180,
+    150
+  ),
+  31: (
+    1050,
+    40,
+    -90,
+    -755,
+    200,
+    -90
+  ),
+  32: (
+    -1110,
+    30,
+    -180,
+    -670,
+    -180,
+    70
+  ),
+  33: (
+    775,
+    -180,
+    120,
+    775,
+    -180,
+    60
+  ),
+  34: (
+    -840,
+    -180,
+    210,
+    680,
+    310,
+    0
+  ),
+  35: (
+    690,
+    300,
+    0,
+    -745,
+    -110,
+    0
+  ),
+  36: (
+    -670,
+    540,
+    30,
+    -580,
+    205,
+    -90
+  )
+);
+
+@each $key, $values in $rollsBMap {
+  .rollB#{$key}:checked ~ .dice .die1 .die-inner {
+    transform: translate(-50px, 300px)
+      rotateX(#{nth($values, 1)}deg)
+      rotateY(#{nth($values, 2)}deg)
+      rotateZ(#{nth($values, 3)}deg);
+  }
+  .rollB#{$key}:checked ~ .dice .die2 .die-inner {
+    transform: translate(50px, 300px)
+      rotateX(#{nth($values, 4)}deg)
+      rotateY(#{nth($values, 5)}deg)
+      rotateZ(#{nth($values, 6)}deg);
+  }
+}
+
+.result {
+  width: 160px;
+  height: 160px;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 260px;
+  margin: 0 auto;
+  pointer-events: none;
+}
+
+.result-bg-wrapper {
+  top: 0;
+  left: 0;
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  animation: rotateResultBG 11s linear infinite;
+  animation-play-state: paused;
+}
+@keyframes rotateResultBG {
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.setA:checked ~ .result .result-bg-wrapperA,
+.setB:checked ~ .result .result-bg-wrapperB {
+  animation-play-state: running;
+}
+
+.result-bg {
+  background-color: #424242;
+  height: 100%;
+  width: 100%;
+  border-radius: 15px;
+  opacity: 0;
+  box-shadow: 0px 0px 60px 5px hsl(0deg 73% 39% / 39%);
+  transform: rotate(180deg) scale(0.25);
+  transition: 0.56s, transform 1.44s cubic-bezier(0, 0.32, 0.6, 2.46);
+}
+.result:hover .result-bg {
+  background-color: #1c6993;
+  transition: background-color 0.44s;
+}
+.setA:checked ~ .result .result-bgA,
+.setB:checked ~ .result .result-bgB {
+  transition: opacity 1.14s 1.88s, background-color 2.12s 2s,
+    transform 1.17s 1.68s cubic-bezier(0.86, 0, 0.07, 1);
+  transform: rotate(-45deg) scale(1);
+  opacity: 1;
+  background-color: #913333;
+}
+
+.result-bg:before {
+  content: "";
+  width: calc(100% - 12px);
+  height: calc(100% - 12px);
+  position: absolute;
+  left: 6px;
+  top: 6px;
+  box-shadow: 0px 0px 20px -2px inset #000;
+  border-radius: 10px;
+}
+.result-content {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  div {
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transform: scale(0.65);
+    transition: 0.24s 0.08s;
+    &:before {
+      content: "";
+      border-radius: 50%;
+      width: 92px;
+      height: 92px;
+      position: absolute;
+      left: 0;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      margin: auto;
+      background-color: hsl(0deg 0% 100% / 15%);
+    }
+  }
+  span {
+    font-size: 96px;
+    color: #28b59b;
+    margin-bottom: 16px;
+    font-weight: 600;
+    text-shadow: 3px 6px 6px #000000, 0px 0px 15px rgb(255 255 255 / 40%);
+    z-index: 1;
+  }
+}
+
+$rollAResults: "A8", "A6", "A8", "A11", "A10", "A4", "A8", "A5", "A9", "A4",
+  "A4", "A9", "A10", "A9", "A7", "A7", "A3", "A7", "A10", "A7", "A6", "A5", "A9",
+  "A7", "A6", "A5", "A2", "A11", "A6", "A8", "A7", "A3", "A6", "A8", "A5", "A12";
+$rollBResults: "B9", "B8", "B2", "B12", "B8", "B5", "B4", "B4", "B7", "B10",
+  "B6", "B7", "B7", "B9", "B7", "B3", "B3", "B10", "B5", "B7", "B8", "B5", "B11",
+  "B9", "B8", "B5", "B8", "B6", "B11", "B6", "B4", "B9", "B6", "B6", "B10", "B7";
+
+@mixin rollResultsProps {
+  opacity: 1;
+  transform: scale(1);
+  transition: 1.12s 1.76s;
+}
+
+$rollAResultsSelectors: "";
+$rollBResultsSelectors: "";
+$rollAResultsSelectorIndex: 1;
+$rollBResultsSelectorIndex: 1;
+
+@each $result in $rollAResults {
+  $selector: ".rollA#{$rollAResultsSelectorIndex}:checked ~ .result .result-#{$result}";
+  $rollAResultsSelectors: append($rollAResultsSelectors, $selector ",");
+  $rollAResultsSelectorIndex: $rollAResultsSelectorIndex + 1;
+}
+
+#{$rollAResultsSelectors} {
+  @include rollResultsProps;
+}
+
+@each $result in $rollBResults {
+  $selector: ".rollB#{$rollBResultsSelectorIndex}:checked ~ .result .result-#{$result}";
+  $rollBResultsSelectors: append($rollBResultsSelectors, $selector ",");
+  $rollBResultsSelectorIndex: $rollBResultsSelectorIndex + 1;
+}
+
+#{$rollBResultsSelectors} {
+  @include rollResultsProps;
+}

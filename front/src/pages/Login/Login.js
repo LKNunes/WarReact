@@ -1,12 +1,14 @@
 import { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../AuthContext';  // <-- Importando o contexto
 
 export default function Login() {
   const [modo, setModo] = useState('login'); // 'login' ou 'cadastro'
   const [form, setForm] = useState({ email: '', senha: '', nome_usuario: '' });
   const [mensagem, setMensagem] = useState('');
   const navigate = useNavigate();
+  const { login } = useAuth();  // <-- Pegando a função login do contexto
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -17,40 +19,41 @@ export default function Login() {
     setMensagem('');
   };
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
-  setMensagem('');
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setMensagem('');
 
-  if (modo === 'login') {
-    try {
-      const res = await axios.post('http://localhost:3001/login', {
-        email: form.email,
-        senha: form.senha,
-      });
+    if (modo === 'login') {
+      try {
+        const res = await axios.post('http://localhost:3001/login', {
+          email: form.email,
+          senha: form.senha,
+        });
 
-      localStorage.setItem('usuarioNome', res.data.usuario.nome_usuario);
-      localStorage.setItem('usuarioId', res.data.usuario.id); // <-- Aqui
+        localStorage.setItem('usuarioNome', res.data.usuario.nome_usuario);
+        localStorage.setItem('usuarioId', res.data.usuario.id);
 
-      navigate('/lobby');
-    } catch (error) {
-      setMensagem(error.response?.data?.erro || 'Erro ao logar');
+        login();               // <-- Aqui: avisa o AuthContext que logou
+        navigate('/lobby');    // Redireciona para o Lobby
+
+      } catch (error) {
+        setMensagem(error.response?.data?.erro || 'Erro ao logar');
+      }
+    } else {
+      try {
+         await axios.post('http://localhost:3001/cadastro', {
+          nome_usuario: form.nome_usuario,
+          email: form.email,
+          senha: form.senha,
+        });
+        setMensagem('Cadastro realizado com sucesso! Faça login.');
+        setModo('login');
+        resetForm();
+      } catch (error) {
+        setMensagem(error.response?.data?.erro || 'Erro ao cadastrar');
+      }
     }
-  } else {
-    try {
-      const res = await axios.post('http://localhost:3001/cadastro', {
-        nome_usuario: form.nome_usuario,
-        email: form.email,
-        senha: form.senha,
-      });
-      setMensagem('Cadastro realizado com sucesso! Faça login.');
-      setModo('login');
-      resetForm();
-    } catch (error) {
-      setMensagem(error.response?.data?.erro || 'Erro ao cadastrar');
-    }
-  }
-};
-
+  };
 
   return (
     <div className="max-w-md mx-auto mt-20 p-6 border rounded shadow bg-white">
@@ -123,6 +126,7 @@ const handleSubmit = async (e) => {
               onClick={() => {
                 resetForm();
                 setModo('login');
+                
               }}
             >
               Fazer login
