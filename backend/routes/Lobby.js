@@ -39,6 +39,27 @@ router.post('/entrar', (req, res) => {
   });
 });
 
+
+// Verificar se o jogador já está no lobby
+router.get('/:lobbyId/jogador/:jogadorId', (req, res) => {
+  const { lobbyId, jogadorId } = req.params;
+
+  const sql = `
+    SELECT * FROM lobby_jogadores
+    WHERE lobby_id = ? AND jogador_id = ?
+  `;
+
+  db.query(sql, [lobbyId, jogadorId], (err, results) => {
+    if (err) {
+      console.error('Erro ao verificar jogador no lobby:', err);
+      return res.status(500).json({ erro: 'Erro no servidor' });
+    }
+
+    const presente = results.length > 0;
+    res.json({ presente });
+  });
+});
+
 const entrarNoLobby = async (lobbyId, jogadorId) => {
   try {
     await axios.post('http://localhost:3001/lobbys/entrar', {

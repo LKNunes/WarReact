@@ -22,6 +22,21 @@ export default function LobbyList() {
     }
   };
 
+async function verificarSeEstaNoLobby(lobbyId, jogadorId) {
+  try {
+    const response = await axios.get(`http://localhost:3001/lobbys/${lobbyId}/jogador/${jogadorId}`);
+    console.log(response.data);
+
+    if (response.data.presente) {
+      alert('Jogador está no lobby');
+    } else {
+      alert('Jogador NÃO está no lobby');
+    }
+  } catch (error) {
+    console.error('Erro ao verificar jogador no lobby:', error);
+  }
+}
+
   const criarLobby = async () => {
     if (!novoLobby.trim()) return;
 
@@ -37,18 +52,30 @@ export default function LobbyList() {
     }
   };
 
-  const entrarNoLobby = async (lobbyId) => {
-    try {
-      await axios.post('http://localhost:3001/lobbys/entrar', {
-        lobby_id: lobbyId,
-        jogador_id: jogadorId,
-      });
+const entrarNoLobby = async (lobbyId) => {
+  try {
+    // 1) Verificar se o jogador já está no lobby
+    const resposta = await axios.get(`http://localhost:3001/lobbys/${lobbyId}/jogador/${jogadorId}`);
+
+    if (resposta.data.presente) {
+      alert('Você já está neste lobby!');
       navigate(`/lobby/${lobbyId}`);
-    } catch (error) {
-      console.error('Erro ao entrar no lobby:', error);
-      alert('Erro ao entrar no lobby');
+      return;
     }
-  };
+
+    // 2) Se não estiver, envia o POST para entrar
+    await axios.post('http://localhost:3001/lobbys/entrar', {
+      lobby_id: lobbyId,
+      jogador_id: jogadorId,
+    });
+
+    navigate(`/lobby/${lobbyId}`);
+  } catch (error) {
+    console.error('Erro ao entrar no lobby:', error);
+    alert('Erro ao entrar no lobby');
+  }
+};
+
 
   return (
     <div className="p-4">
