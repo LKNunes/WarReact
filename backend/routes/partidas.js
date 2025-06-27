@@ -35,57 +35,88 @@ router.get('/:id/jogadores', (req, res) => {
 });
 
 
-// Rota para criar uma nova partida a partir de um lobby
 router.post('/:id/criar', (req, res) => {
-  const lobbyId = req.params.id;
+  const lobbyId = parseInt(req.params.id);
   const jogadorId = req.body.jogador_id;
 
   if (!jogadorId || !lobbyId) {
     return res.status(400).json({ erro: 'Jogador ID e Lobby ID são obrigatórios' });
   }
 
-  // 1) Criar partida
-  const sqlCriarPartida = 'INSERT INTO partidas (lobby_id, jogador_inicial_id, criado_em) VALUES (?, ?, NOW())';
+  // Criar a partida com o ID igual ao do lobby
+  const sqlCriarPartida = 'INSERT INTO partidas (id, lobby_id, jogador_inicial_id, criado_em) VALUES (?, ?, ?, NOW())';
 
-  db.query(sqlCriarPartida, [lobbyId, jogadorId], (err, result) => {
+  db.query(sqlCriarPartida, [lobbyId, lobbyId, jogadorId], (err) => {
     if (err) {
       console.error('Erro ao criar partida:', err);
       return res.status(500).json({ erro: 'Erro ao criar partida' });
     }
 
-    const partidaId = result.insertId;
-
-    // 2) Buscar jogadores do lobby
-    const sqlBuscarJogadores = 'SELECT jogador_id FROM lobby_jogadores WHERE lobby_id = ?';
-    db.query(sqlBuscarJogadores, [lobbyId], (err2, jogadores) => {
+    // Fechar o lobby
+    const sqlFecharLobby = 'UPDATE lobbys SET status = "fechado" WHERE id = ?';
+    db.query(sqlFecharLobby, [lobbyId], (err2) => {
       if (err2) {
-        console.error('Erro ao buscar jogadores do lobby:', err2);
-        return res.status(500).json({ erro: 'Erro ao buscar jogadores do lobby' });
+        console.error('Erro ao fechar o lobby:', err2);
+        return res.status(500).json({ erro: 'Erro ao fechar o lobby' });
       }
 
-      if (jogadores.length === 0) {
-        return res.status(400).json({ erro: 'Lobby não possui jogadores' });
-      }
-
-      // 3) Inserir jogadores na partida_jogadores
-      const valores = jogadores.map(j => [partidaId, j.jogador_id]);
-      const sqlInserirPartidaJogadores = 'INSERT INTO partida_jogadores (partida_id, jogador_id) VALUES ?';
-
-      db.query(sqlInserirPartidaJogadores, [valores], (err3) => {
+      // Buscar jogadores do lobby
+      const sqlBuscarJogadores = 'SELECT jogador_id FROM lobby_jogadores WHERE lobby_id = ?';
+      db.query(sqlBuscarJogadores, [lobbyId], (err3, jogadores) => {
         if (err3) {
-          console.error('Erro ao inserir jogadores na partida:', err3);
-          return res.status(500).json({ erro: 'Erro ao inserir jogadores na partida' });
+          console.error('Erro ao buscar jogadores do lobby:', err3);
+          return res.status(500).json({ erro: 'Erro ao buscar jogadores do lobby' });
         }
 
-        // 4) Retorna sucesso com ID da partida
-        res.status(201).json({
-          mensagem: 'Partida criada com sucesso',
-          partidaId: partidaId,
+        if (jogadores.length === 0) {
+          return res.status(400).json({ erro: 'Lobby não possui jogadores' });
+        }
+
+        const valores = jogadores.map(j => [lobbyId, j.jogador_id]);
+        const sqlInserirPartidaJogadores = 'INSERT INTO partida_jogadores (partida_id, jogador_id) VALUES ?';
+
+        db.query(sqlInserirPartidaJogadores, [valores], (err4) => {
+          if (err4) {
+            console.error('Erro ao inserir jogadores na partida:', err4);
+            return res.status(500).json({ erro: 'Erro ao inserir jogadores na partida' });
+          }
+
+          // Responder sucesso uma única vez após todos os passos concluídos
+          res.status(201).json({
+            mensagem: 'Partida criada, lobby fechado e jogadores inseridos com sucesso',
+            partidaId: lobbyId,
+          });
         });
       });
     });
   });
 });
+
+
+// Buscar partida de um lobby específico
+router.get('/lobby/:lobbyId', (req, res) => {
+  const lobbyId = req.params.lobbyId;
+
+  const sql = 'SELECT id FROM partidas WHERE lobby_id = ? LIMIT 1';
+
+  db.query(sql, [lobbyId], (err, results) => {
+    if (err) {
+      console.error('Erro ao buscar partida por lobby:', err);
+      return res.status(500).json({ erro: 'Erro ao buscar partida' });
+    }
+
+    if (results.length === 0) {
+      return res.status(404).json({ erro: 'Nenhuma partida encontrada para este lobby' });
+    }
+
+    const partidaId = results[0].id;  // <- Aqui ele pega o ID da partida
+
+    res.json({
+      partidaId: partidaId,
+    });
+  });
+});
+
 
 
 module.exports = router;

@@ -91,16 +91,86 @@ router.get('/:lobbyId/jogadores', (req, res) => {
   });
 });
 
-router.post('/entrar', (req, res) => {
-  const { lobby_id, jogador_id } = req.body;
-  // Aqui, implemente o código para adicionar jogador ao lobby no banco
-  // Exemplo fictício:
-  const sql = 'INSERT INTO lobby_jogadores (lobby_id, jogador_id) VALUES (?, ?)';
-  db.query(sql, [lobby_id, jogador_id], (err, result) => {
+// Verificar status do lobby (se está fechado ou aberto)
+router.get('/:lobbyId/status', (req, res) => {
+  const lobbyId = req.params.lobbyId;
+
+  const sql = 'SELECT status FROM lobbys WHERE id = ?';
+  db.query(sql, [lobbyId], (err, results) => {
     if (err) return res.status(500).json({ erro: err });
-    res.json({ mensagem: 'Entrou no lobby' });
+
+    if (results.length === 0) {
+      return res.status(404).json({ erro: 'Lobby não encontrado' });
+    }
+
+    res.json({ status: results[0].status });
   });
 });
+
+
+router.post('/entrar', (req, res) => {
+  const { lobby_id, jogador_id } = req.body;
+
+  if (!lobby_id || !jogador_id) {
+    return res.status(400).json({ erro: 'Campos obrigatórios' });
+  }
+
+  // 1) Primeiro consultar o status do lobby
+  const sqlStatus = 'SELECT fechado FROM lobbys WHERE id = ?';
+  db.query(sqlStatus, [lobby_id], (err, result) => {
+    if (err) {
+      console.error('Erro ao verificar status do lobby:', err);
+      return res.status(500).json({ erro: 'Erro ao verificar status do lobby' });
+    }
+
+    if (result.length === 0) {
+      return res.status(404).json({ erro: 'Lobby não encontrado' });
+    }
+
+    const status = result[0].status;
+    console.log("teste");
+    // 2) Se lobby estiver FECHADO, envia direto pra partida
+    if (status === 'fechado') {
+      // Verificar se a partida já existe para esse lobby
+      const sqlBuscarPartida = 'SELECT id FROM partidas WHERE lobby_id = ? LIMIT 1';
+      db.query(sqlBuscarPartida, [lobby_id], (err2, partidaResult) => {
+        if (err2) {
+          console.error('Erro ao buscar partida:', err2);
+          return res.status(500).json({ erro: 'Erro ao buscar partida' });
+        }
+
+        if (partidaResult.length === 0) {
+          return res.status(404).json({ erro: 'Partida para o lobby não encontrada' });
+        }
+
+        const partidaId = partidaResult[0].id;
+
+        // Adiciona o jogador na partida_jogadores
+        const sqlEntrarPartida = 'INSERT INTO partida_jogadores (partida_id, jogador_id) VALUES (?, ?)';
+        db.query(sqlEntrarPartida, [partidaId, jogador_id], (err3) => {
+          if (err3) {
+            console.error('Erro ao adicionar jogador na partida:', err3);
+            return res.status(500).json({ erro: 'Erro ao adicionar jogador na partida' });
+          }
+
+          return res.status(200).json({ mensagem: 'Jogador enviado diretamente para a partida', partidaId });
+        });
+      });
+    } else {
+      // 3) Se lobby estiver ABERTO, segue o fluxo normal de adicionar no lobby
+      const sqlEntrarLobby = 'INSERT INTO lobby_jogadores (lobby_id, jogador_id) VALUES (?, ?)';
+      db.query(sqlEntrarLobby, [lobby_id, jogador_id], (err4) => {
+        if (err4) {
+          console.error('Erro ao entrar no lobby:', err4);
+          return res.status(500).json({ erro: 'Erro ao entrar no lobby' });
+        }
+        res.status(200).json({ mensagem: 'Entrou no lobby com sucesso' });
+      });
+    }
+  });
+});
+
+
 
 // Sair do lobby
 router.post('/sair', (req, res) => {
@@ -112,5 +182,21 @@ router.post('/sair', (req, res) => {
     res.json({ mensagem: 'Saiu do lobby' });
   });
 });
+
+router.get('/lobby/:lobbyId', (req, res) => {
+  const lobbyId = req.params.lobbyId;
+
+  const sql = 'SELECT id AS partidaId FROM partidas WHERE lobby_id = ? LIMIT 1';
+  db.query(sql, [lobbyId], (err, results) => {
+    if (err) return res.status(500).json({ erro: err });
+
+    if (results.length === 0) {
+      return res.status(404).json({ erro: 'Nenhuma partida encontrada para este lobby' });
+    }
+
+    res.json({ partidaId: results[0].partidaId });
+  });
+});
+
 
 module.exports = router;

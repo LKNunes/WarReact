@@ -52,9 +52,26 @@ async function verificarSeEstaNoLobby(lobbyId, jogadorId) {
     }
   };
 
+
+  
 const entrarNoLobby = async (lobbyId) => {
   try {
-    // 1) Verificar se o jogador já está no lobby
+    // 1) Verificar o status do lobby
+    const statusResponse = await axios.get(`http://localhost:3001/lobbys/${lobbyId}/status`);
+    const status = statusResponse.data.status;
+
+    if (status === 'fechado') {
+      // Se o lobby estiver fechado, buscar a partida correspondente
+      const partidaResponse = await axios.get(`http://localhost:3001/partidas/lobby/${lobbyId}`);
+      const partidaId = partidaResponse.data.partidaId;
+
+      alert('O lobby já está fechado. Você será redirecionado para a partida.');
+
+      navigate(`/partida/${partidaId}`);
+      return;
+    }
+
+    // 2) Se o lobby ainda estiver aberto, verificar se o jogador já está no lobby
     const resposta = await axios.get(`http://localhost:3001/lobbys/${lobbyId}/jogador/${jogadorId}`);
 
     if (resposta.data.presente) {
@@ -63,7 +80,7 @@ const entrarNoLobby = async (lobbyId) => {
       return;
     }
 
-    // 2) Se não estiver, envia o POST para entrar
+    // 3) Se não estiver, enviar o POST para entrar no lobby
     await axios.post('http://localhost:3001/lobbys/entrar', {
       lobby_id: lobbyId,
       jogador_id: jogadorId,
@@ -72,9 +89,12 @@ const entrarNoLobby = async (lobbyId) => {
     navigate(`/lobby/${lobbyId}`);
   } catch (error) {
     console.error('Erro ao entrar no lobby:', error);
-    alert('Erro ao entrar no lobby');
+    alert('Erro ao tentar entrar no lobby.');
   }
 };
+
+
+
 
 
   return (
