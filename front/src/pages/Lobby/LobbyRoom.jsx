@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useAlert } from '../AlertContext';
+
 
 export default function LobbyRoom() {
   const { id } = useParams();
@@ -8,6 +10,7 @@ export default function LobbyRoom() {
   const [jogadores, setJogadores] = useState([]);
   const navigate = useNavigate();
   const jogadorId = localStorage.getItem('usuarioId');
+  const { showAlert } = useAlert();
 
   useEffect(() => {
     if (!jogadorId) {
@@ -25,6 +28,8 @@ export default function LobbyRoom() {
       setLobby(lobbyEncontrado);
     } catch (error) {
       console.error('Erro ao buscar lobby:', error);
+      showAlert('Erro ao buscar lobbys.', 'error');
+
     }
   };
 
@@ -34,6 +39,8 @@ export default function LobbyRoom() {
       setJogadores(res.data);
     } catch (error) {
       console.error('Erro ao buscar jogadores do lobby:', error);
+            showAlert('Erro ao buscar jogadores do lobby:', 'error');
+
     }
   };
 
@@ -46,7 +53,8 @@ export default function LobbyRoom() {
       navigate('/lobby');
     } catch (error) {
       console.error('Erro ao sair do lobby:', error);
-      alert('Erro ao sair do lobby');
+      showAlert('Erro ao sair do lobby:', 'error');
+
     }
   };
 
@@ -61,7 +69,8 @@ export default function LobbyRoom() {
       navigate(`/partida/${partidaId}`);
     } catch (error) {
       console.error('Erro ao criar partida:', error);
-      alert('Erro ao criar partida');
+      showAlert('Erro ao criar partida:', 'error');
+
     }
   };
 

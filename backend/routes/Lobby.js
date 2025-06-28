@@ -60,20 +60,6 @@ router.get('/:lobbyId/jogador/:jogadorId', (req, res) => {
   });
 });
 
-const entrarNoLobby = async (lobbyId, jogadorId) => {
-  try {
-    await axios.post('http://localhost:3001/lobbys/entrar', {
-      lobby_id: lobbyId,
-      jogador_id: jogadorId
-    });
-    alert('Você entrou no lobby!');
-    // Aqui pode atualizar a lista, redirecionar, etc
-  } catch (error) {
-    console.error('Erro ao entrar no lobby:', error);
-    alert('Falha ao entrar no lobby.');
-  }
-};
-
 // Exemplo simples de rota para buscar jogadores no lobby
 router.get('/:lobbyId/jogadores', (req, res) => {
   const lobbyId = req.params.lobbyId;

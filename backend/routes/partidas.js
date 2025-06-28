@@ -3,10 +3,12 @@ const router = express.Router();
 const db = require('../database/db');
 
 
-
-// Rota de teste (só pra ver se o módulo está carregando)
+// Listar todas as partidas
 router.get('/', (req, res) => {
-  res.send('Rota de partidas funcionando!');
+  db.query('SELECT * FROM partidas', (err, results) => {
+    if (err) return res.status(500).json({ erro: err });
+    res.json(results);
+  });
 });
 
 router.get('/:id', (req, res) => {
@@ -31,6 +33,17 @@ router.get('/:id/jogadores', (req, res) => {
   db.query(sql, [id], (err, results) => {
     if (err) return res.status(500).json({ erro: err });
     res.json(results);
+  });
+});
+
+// Sair da partida
+router.post('/sair', (req, res) => {
+  const { partida_id, jogador_id } = req.body;
+  // Código para remover jogador do lobby
+  const sql = 'DELETE FROM partida_jogadores WHERE partida_id = ? AND jogador_id = ?'; //Desativado
+  db.query(sql, [partida_id, jogador_id], (err, result) => {
+    if (err) return res.status(500).json({ erro: err });
+    res.json({ mensagem: 'Saiu da partida' });
   });
 });
 

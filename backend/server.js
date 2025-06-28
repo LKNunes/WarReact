@@ -20,6 +20,8 @@ app.use('/partidas', partidasRoutes);
 const lobbyRoutes = require('./routes/Lobby');
 app.use('/lobbys', lobbyRoutes);
 
+
+
 const io = new Server(server, {
   cors: {
     origin: '*',

@@ -5,33 +5,37 @@ import Partida from './pages/Partida/Partida';
 import Perfil from './pages/Perfil';
 import MainLayout from './layout/mainlayout';
 import PrivateRoute from './PrivateRoute';
+import { AlertProvider } from './pages/AlertContext';
+import Partidas from './pages/Partida/partidas';
 
 import './App.css';
 
 function App() {
   return (
-    <Routes>
+    <AlertProvider>
+      <Routes>
+        {/* Rota pública: Login */}
+        <Route path="/" element={<Login />} />
 
-      {/* Rota pública: Login */}
-      <Route path="/" element={<Login />} />
+        {/* Rotas protegidas com Layout */}
+        <Route
+          path="/"
+          element={
+            <PrivateRoute>
+              <MainLayout />
+            </PrivateRoute>
+          }
+        >
+          <Route path="lobby" element={<Lobby />} />
+          <Route path="lobby/:id" element={<Lobby />} />
+          <Route path="/partida/" element={<Partida />} />
+          <Route path="/partida/:id" element={<Partida />} />
+          <Route path="perfil" element={<Perfil />} />
+          <Route path="/partidas" element={<Partidas />} />
 
-      {/* Rotas protegidas com Layout */}
-      <Route
-        path="/"
-        element={
-          <PrivateRoute>
-            <MainLayout />
-          </PrivateRoute>
-        }
-      >
-        <Route path="lobby" element={<Lobby />} />
-        <Route path="lobby/:id" element={<Lobby />} />
-        <Route path="/partida/" element={<Partida />} />
-        <Route path="/partida/:id" element={<Partida />} />
-        <Route path="perfil" element={<Perfil />} />
-      </Route>
-
-    </Routes>
+        </Route>
+      </Routes>
+    </AlertProvider>
   );
 }
 
