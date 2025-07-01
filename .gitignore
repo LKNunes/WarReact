@@ -1,1 +1,15 @@
-**/.env
+# Node.js
+node_modules/
+dist/
+build/
+
+# Arquivos de ambiente
+**/.env*
+.env
+
+# Logs
+*.log
+
+# Sistema operacional
+.DS_Store
+Thumbs.db
