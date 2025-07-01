@@ -5,16 +5,15 @@ import './mapamundi.css';
 export default function MapaMundi() {
   const handleTerritoryClick = (id) => {
     console.log('Território clicado:', id);
-    // Aqui você pode disparar uma ação, mudar o estado, etc.
   };
 
   return (
-    <div className="w-full max-w-5xl mx-auto">
+    <div className="absolute inset-2 flex items-center justify-center overflow-hidden">
       <WorldMap
         onClick={(e) => {
           if (e.target.id) handleTerritoryClick(e.target.id);
         }}
-        className="hoverable-map"
+        className="w-full h-full hoverable-map"
       />
     </div>
   );

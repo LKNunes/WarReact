@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
-import Alert from '@mui/material/Alert';
 import MapaMundi from '../../componentes/mapamundi';
 
 export default function PartidaRoom() {
@@ -51,41 +50,45 @@ export default function PartidaRoom() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 flex flex-col gap-8 p-4">
+    <div className="min-h-screen flex">
 
-      {/* Bloco Superior: Informações da Partida */}
-      <div className="bg-white rounded-xl shadow p-4">
-        {/* Título da Partida */}
-        <h1 className="text-3xl font-bold mb-4">
-          Partida: {partida.nome || `#${partida.id}`}
-        </h1>
+      {/* Sidebar Esquerda */}
+      <div className="w-80 bg-black text-white p-4 overflow-y-auto">
+        <h1 className="text-xl font-bold mb-4">Partida: #{partida.id}</h1>
 
-        {/* Lista de Jogadores */}
-        <div className="mb-6">
-          <h2 className="text-xl font-semibold mb-2">Jogadores na partida:</h2>
-          <ul className="list-disc list-inside">
-            {jogadores.length === 0 ? (
-              <li>Nenhum jogador na partida</li>
-            ) : (
-              jogadores.map((jogador) => (
-                <li key={jogador.id}>{jogador.nome_usuario}</li>
-              ))
-            )}
-          </ul>
-        </div>
+        <h2 className="text-lg font-semibold mb-2">Jogadores:</h2>
+        <ul className="mb-4">
+          {jogadores.length === 0 ? (
+            <li>Nenhum jogador na partida</li>
+          ) : (
+            jogadores.map((jogador) => (
+              <li key={jogador.id}>{jogador.nome_usuario}</li>
+            ))
+          )}
+        </ul>
 
-        {/* Botão Sair */}
         <button
-          className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded"
           onClick={sairDaPartida}
+          className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded w-full mb-6"
         >
           Sair da Partida
         </button>
+
+        {/* Exemplo de espaço para Objetivo */}
+        <div>
+          <h2 className="text-lg font-semibold mb-2">Objetivo:</h2>
+          <p>Aqui vai o objetivo do jogador...</p>
+        </div>
+
+        {/* Exemplo de espaço para Cartas */}
+        <div className="mt-4">
+          <h2 className="text-lg font-semibold mb-2">Cartas:</h2>
+          <p>Aqui vai a lista de cartas...</p>
+        </div>
       </div>
 
-      {/* Bloco Inferior: Mapa Mundi */}
-      <div className="bg-white rounded-xl shadow p-4">
-        <h2 className="text-2xl font-bold mb-4">Mapa Mundi - Controle de Territórios</h2>
+      {/* Mapa Mundi ocupando todo o resto da tela */}
+      <div className="flex-grow relative bg-blue-200">
         <MapaMundi />
       </div>
 

@@ -12,3 +12,13 @@
   fill: #FF5500 !important;
   stroke: #000 !important;
 }
+
+.hoverable-map [id]:hover {
+  fill: rgba(255, 215, 0, 0.6);
+  cursor: pointer;
+  transition: fill 0.2s ease;
+}
+
+.hoverable-map [id] {
+  transition: fill 0.2s ease;
+}

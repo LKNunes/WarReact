@@ -46,8 +46,8 @@ export default function MainLayout() {
         </nav>
       </header>
 
-      <main className="flex-grow p-6 max-w-7xl mx-auto">
-        <div className="bg-black bg-opacity-30 rounded-lg shadow-lg p-6 min-h-[400px]">
+      <main className="flex-grow p-6 ">
+        <div className="bg-black bg-opacity-30 backdrop-blur rounded-lg shadow-lg p-6 min-h-[400px]">
           <Outlet />
         </div>
       </main>

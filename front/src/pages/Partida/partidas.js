@@ -30,13 +30,13 @@ export default function Partidas() {
 
   return (
     <div className="p-4">
-      <h1 className="text-2xl font-bold mb-3 ">Lista de Partidas</h1>
+      <h1 className="text-2xl font-bold mb-2 ">Lista de Partidas</h1>
 
-      <ul className="flex flex-wrap space-x-2  px-2 ">
+      <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {partidas.map((partida) => (
           <li
             key={partida.id}
-            className="border p-3 rounded  "
+            className="border p-3 rounded "
           >
             <strong>ID:</strong> {partida.id} <br />
             <strong>Lobby ID:</strong> {partida.lobby_id} <br />
