@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
 import MapaMundi from '../../componentes/mapamundi';
+import  Flipcard from '../../componentes/FlipCard.jsx'
+
 
 export default function PartidaRoom() {
   const { id } = useParams();
@@ -77,7 +79,12 @@ export default function PartidaRoom() {
         {/* Exemplo de espaço para Objetivo */}
         <div>
           <h2 className="text-lg font-semibold mb-2">Objetivo:</h2>
-          <p>Aqui vai o objetivo do jogador...</p>
+                  <Flipcard
+                  tituloFrente="Objetivo"
+                  textoFrente="Cloque para revelar"
+                  tituloVerso="Elimine"
+                  textoVerso="O Azul!"
+                />
         </div>
 
         {/* Exemplo de espaço para Cartas */}
