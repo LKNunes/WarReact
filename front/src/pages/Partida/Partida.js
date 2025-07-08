@@ -95,7 +95,7 @@ export default function PartidaRoom() {
       </div>
 
       {/* Mapa Mundi ocupando todo o resto da tela */}
-      <div className="flex-grow relative bg-blue-200">
+      <div className="flex-grow relative bg-oceano">
         <MapaMundi />
       </div>
 
